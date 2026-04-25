@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTML & CSS Structure Master</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap");
+
+      body {
+        background-color: #0f172a;
+        color: #e2e8f0;
+        overflow: hidden;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .code-editor {
+        font-family: "Fira Code", monospace;
+        resize: none;
+        background: #1e293b;
+        color: #ffffff;
+        line-height: 1.6;
+        outline: none;
+        width: 100%;
+        height: 100%;
+        padding: 1.5rem;
+        min-height: 750px;
+      }
+
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: #1e293b;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #475569;
+        border-radius: 4px;
+      }
+
+      .preview-container {
+        background: white;
+        color: black;
+        border-radius: 8px;
+        overflow-y: auto;
+      }
+
+      /* Default Challenge Classes - These can be overridden in the CSS editor */
+      #user-styles-container {
+      }
+    </style>
+  </head>
+  <body>
+    <!-- User-defined CSS will be injected here -->
+    <style id="user-styles-container"></style>
+
+    <!-- Header -->
+    <header
+      class="bg-slate-900 border-b border-slate-700 p-3 flex justify-between items-center shadow-lg shrink-0"
+    >
+      <div class="flex items-center gap-3">
+        <div class="bg-blue-600 p-1.5 rounded-lg">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+            />
+          </svg>
+        </div>
+        <h1 class="text-lg font-bold tracking-tight">
+          Design <span class="text-blue-500">Sandbox</span>
+        </h1>
+      </div>
+
+      <div class="flex gap-3">
+        <button
+          onclick="generateChallenge()"
+          class="bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-md transition-all text-xs font-medium"
+        >
+          New Challenge
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="flex-1 flex flex-col overflow-hidden">
+      <!-- Top Pane: Goal + Live Progress side by side -->
+      <div
+        class="flex border-b border-slate-800 overflow-hidden shrink-0"
+        style="height: 45vh; min-height: 180px"
+      >
+        <!-- Goal (left) -->
+        <div class="w-1/2 flex flex-col border-r border-slate-800 bg-slate-950">
+          <div
+            class="flex items-center justify-between px-4 py-1.5 bg-slate-900 border-b border-slate-800 shrink-0"
+          >
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 rounded-full bg-green-500"></div>
+              <span
+                class="text-xs text-slate-400 font-medium uppercase tracking-wider"
+                >Goal: Recreate this design</span
+              >
+            </div>
+            <span
+              id="status-tag"
+              class="text-[10px] bg-blue-900/40 text-blue-400 px-2 py-0.5 rounded border border-blue-800/50"
+              >Ready</span
+            >
+          </div>
+          <div
+            id="target-view"
+            class="overflow-auto preview-container flex-1 p-4 shadow-inner border-slate-800"
+          >
+            <!-- Goal Site Injected Here -->
+          </div>
+        </div>
+
+        <!-- Your Progress (right) -->
+        <div class="w-1/2 flex flex-col bg-slate-950">
+          <div
+            class="flex items-center px-4 py-1.5 bg-slate-900 border-b border-slate-800 shrink-0"
+          >
+            <div class="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
+            <span
+              class="text-xs text-slate-400 font-medium uppercase tracking-wider"
+              >Your Progress</span
+            >
+          </div>
+          <div id="live-preview" class="preview-container flex-1 p-4">
+            <!-- User Content Injected Here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Pane: Dual Editors (HTML & CSS) -->
+      <div class="flex-1 flex overflow-auto relative custom-scrollbar">
+        <div class="flex min-w-full h-fit">
+          <!-- HTML Editor -->
+          <div class="w-1/2 flex flex-col border-r border-slate-800">
+            <div
+              class="sticky top-0 z-10 flex items-center px-4 py-1.5 bg-slate-800 text-[10px] font-bold text-slate-500 uppercase tracking-widest border-b border-slate-800"
+            >
+              HTML
+            </div>
+            <div class="flex-1 relative">
+              <textarea
+                id="html-input"
+                spellcheck="false"
+                class="code-editor"
+                placeholder="<!-- Write your HTML here... -->"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- CSS Editor -->
+          <div class="w-1/2 flex flex-col">
+            <div
+              class="sticky top-0 z-10 flex items-center px-4 py-1.5 bg-slate-800 text-[10px] font-bold text-slate-500 uppercase tracking-widest border-b border-slate-800"
+            >
+              CSS (Custom Classes)
+            </div>
+            <div class="flex-1 relative">
+              <textarea
+                id="css-input"
+                spellcheck="false"
+                class="code-editor text-blue-300"
+                placeholder=".my-class { color: red; }"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      const htmlEditor = document.getElementById("html-input");
+      const cssEditor = document.getElementById("css-input");
+      const livePreview = document.getElementById("live-preview");
+      const targetView = document.getElementById("target-view");
+      const styleSheet = document.getElementById("user-styles-container");
+
+      // Default CSS provided to help user get started
+      const defaultCSS = `.card {
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.btn-primary {
+  background: #3b82f6;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  display: inline-block;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.nav-link {
+  color: #64748b;
+  text-decoration: none;
+  margin-right: 1rem;
+  font-weight: 500;
+}
+
+.hero-banner {
+  background: #f1f5f9;
+  padding: 2rem;
+  text-align: center;
+  border-radius: 0.5rem;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.footer {
+  border-top: 1px solid #e2e8f0;
+  padding: 1rem 0;
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #64748b;
+}`;
+
+      // 1. Tag auto-closing logic
+      htmlEditor.addEventListener("keydown", (e) => {
+        if (e.key === ">") {
+          const pos = htmlEditor.selectionStart;
+          const text = htmlEditor.value;
+          const lastOpen = text.lastIndexOf("<", pos);
+          if (lastOpen !== -1) {
+            const tagContent = text.substring(lastOpen + 1, pos);
+            const tagName = tagContent.split(/[ >]/)[0];
+            const voidTags = ["img", "br", "hr", "input", "meta", "link"];
+            if (
+              tagName &&
+              !tagName.startsWith("/") &&
+              !voidTags.includes(tagName)
+            ) {
+              e.preventDefault();
+              const before = text.substring(0, pos);
+              const after = text.substring(pos);
+              htmlEditor.value = `${before}></${tagName}>${after}`;
+              htmlEditor.selectionStart = htmlEditor.selectionEnd = pos + 1;
+              updatePreview();
+            }
+          }
+        }
+      });
+
+      // 2. Real-time Preview & Style Update
+      htmlEditor.addEventListener("input", updatePreview);
+      cssEditor.addEventListener("input", updateStyles);
+
+      function updatePreview() {
+        livePreview.innerHTML =
+          `<style>${cssEditor.value}</style>` + htmlEditor.value;
+      }
+
+      function updateStyles() {
+        styleSheet.textContent = cssEditor.value;
+        updatePreview();
+      }
+
+      const challenges = [
+        {
+          name: "Landing Page",
+          template: `<div class="hero-banner">\n  <h1 class="section-title">Welcome</h1>\n  <button class="btn-primary">Get Started</button>\n</div>`,
+          html: `
+                    <div class="hero-banner">
+                        <h1 class="section-title">Welcome to Our Service</h1>
+                        <p>The best solution for your daily problems.</p>
+                        <a href="#" class="btn-primary">Get Started</a>
+                    </div>
+                    <div class="grid-3" style="margin-top:20px">
+                        <div class="card"><h3>Feature A</h3></div>
+                        <div class="card"><h3>Feature B</h3></div>
+                        <div class="card"><h3>Feature C</h3></div>
+                    </div>
+                `,
+        },
+        {
+          name: "Pricing Comparison",
+          template: `<div class="grid-3">\n  <div class="card">Basic</div>\n  <div class="card">Pro</div>\n  <div class="card">Enterprise</div>\n</div>`,
+          html: `
+                    <div class="grid-3">
+                        <div class="card" style="text-align:center">
+                            <h2 class="section-title">Starter</h2>
+                            <p>$0/mo</p>
+                            <button class="btn-primary">Join</button>
+                        </div>
+                        <div class="card" style="text-align:center; border: 2px solid #3b82f6">
+                            <h2 class="section-title">Professional</h2>
+                            <p>$29/mo</p>
+                            <button class="btn-primary">Join</button>
+                        </div>
+                        <div class="card" style="text-align:center">
+                            <h2 class="section-title">Business</h2>
+                            <p>$99/mo</p>
+                            <button class="btn-primary">Join</button>
+                        </div>
+                    </div>
+                `,
+        },
+        {
+          name: "Blog Post",
+          template: `<article class="card">\n  <h1 class="section-title">Post Title</h1>\n  <p>Author · Date</p>\n  <p>Content goes here...</p>\n</article>`,
+          html: `
+                    <nav style="margin-bottom:1rem">
+                        <a href="#" class="nav-link">Home</a>
+                        <a href="#" class="nav-link">Blog</a>
+                        <a href="#" class="nav-link">About</a>
+                    </nav>
+                    <article class="card">
+                        <h1 class="section-title">10 Tips for Better Web Design</h1>
+                        <p style="color:#64748b; font-size:0.875rem; margin-bottom:1rem">By Jane Doe · April 25, 2026</p>
+                        <p style="margin-bottom:0.75rem">Good design is about more than aesthetics — it's about creating experiences that feel intuitive and effortless for users.</p>
+                        <p>From typography to spacing, every detail matters. Use consistent patterns, respect whitespace, and always design with accessibility in mind.</p>
+                        <div style="margin-top:1rem">
+                            <a href="#" class="btn-primary">Read More</a>
+                        </div>
+                    </article>
+                    <div class="footer">© 2026 My Blog</div>
+                `,
+        },
+        {
+          name: "Team Members",
+          template: `<h2 class="section-title">Our Team</h2>\n<div class="grid-3">\n  <div class="card">Member</div>\n</div>`,
+          html: `
+                    <h2 class="section-title">Meet Our Team</h2>
+                    <div class="grid-3">
+                        <div class="card" style="text-align:center">
+                            <div style="width:64px;height:64px;border-radius:50%;background:#3b82f6;margin:0 auto 0.75rem;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:1.25rem">A</div>
+                            <h3 style="font-weight:bold">Alice Chen</h3>
+                            <p style="color:#64748b;font-size:0.875rem">Lead Designer</p>
+                        </div>
+                        <div class="card" style="text-align:center">
+                            <div style="width:64px;height:64px;border-radius:50%;background:#10b981;margin:0 auto 0.75rem;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:1.25rem">B</div>
+                            <h3 style="font-weight:bold">Ben Torres</h3>
+                            <p style="color:#64748b;font-size:0.875rem">Backend Engineer</p>
+                        </div>
+                        <div class="card" style="text-align:center">
+                            <div style="width:64px;height:64px;border-radius:50%;background:#f59e0b;margin:0 auto 0.75rem;display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;font-size:1.25rem">C</div>
+                            <h3 style="font-weight:bold">Clara Kim</h3>
+                            <p style="color:#64748b;font-size:0.875rem">Product Manager</p>
+                        </div>
+                    </div>
+                `,
+        },
+        {
+          name: "Contact Form",
+          template: `<div class="card">\n  <h2 class="section-title">Contact Us</h2>\n  <form>\n    <input type="text" placeholder="Name">\n    <button class="btn-primary">Send</button>\n  </form>\n</div>`,
+          html: `
+                    <div class="card" style="max-width:480px;margin:0 auto">
+                        <h2 class="section-title">Contact Us</h2>
+                        <p style="color:#64748b;margin-bottom:1rem">We'd love to hear from you. Fill out the form below.</p>
+                        <form>
+                            <div style="margin-bottom:0.75rem">
+                                <label style="display:block;font-size:0.875rem;font-weight:500;margin-bottom:0.25rem">Name</label>
+                                <input type="text" placeholder="Your name" style="width:100%;border:1px solid #e2e8f0;border-radius:0.25rem;padding:0.5rem;font-size:0.875rem">
+                            </div>
+                            <div style="margin-bottom:0.75rem">
+                                <label style="display:block;font-size:0.875rem;font-weight:500;margin-bottom:0.25rem">Email</label>
+                                <input type="email" placeholder="you@example.com" style="width:100%;border:1px solid #e2e8f0;border-radius:0.25rem;padding:0.5rem;font-size:0.875rem">
+                            </div>
+                            <div style="margin-bottom:1rem">
+                                <label style="display:block;font-size:0.875rem;font-weight:500;margin-bottom:0.25rem">Message</label>
+                                <textarea placeholder="Your message..." style="width:100%;border:1px solid #e2e8f0;border-radius:0.25rem;padding:0.5rem;font-size:0.875rem;height:100px;resize:vertical"></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary">Send Message</button>
+                        </form>
+                    </div>
+                `,
+        },
+        {
+          name: "Testimonials",
+          template: `<h2 class="section-title">Reviews</h2>\n<div class="card">\n  <p>"Great product!"</p>\n  <p>— Customer</p>\n</div>`,
+          html: `
+                    <h2 class="section-title">What Our Users Say</h2>
+                    <div class="grid-3">
+                        <div class="card">
+                            <p style="font-style:italic;margin-bottom:0.75rem">"This tool completely changed how I approach web design. Highly recommended!"</p>
+                            <p style="font-weight:bold;font-size:0.875rem">— Sarah L.</p>
+                            <p style="color:#64748b;font-size:0.75rem">Frontend Developer</p>
+                        </div>
+                        <div class="card">
+                            <p style="font-style:italic;margin-bottom:0.75rem">"Simple, elegant, and powerful. Exactly what I needed to improve my CSS skills."</p>
+                            <p style="font-weight:bold;font-size:0.875rem">— Marcus T.</p>
+                            <p style="color:#64748b;font-size:0.75rem">UI Designer</p>
+                        </div>
+                        <div class="card">
+                            <p style="font-style:italic;margin-bottom:0.75rem">"I love the challenge format. It keeps me engaged and learning every day."</p>
+                            <p style="font-weight:bold;font-size:0.875rem">— Priya M.</p>
+                            <p style="color:#64748b;font-size:0.75rem">Bootcamp Student</p>
+                        </div>
+                    </div>
+                `,
+        },
+        {
+          name: "Product Card",
+          template: `<div class="card">\n  <h2 class="section-title">Product Name</h2>\n  <p>$0.00</p>\n  <button class="btn-primary">Buy Now</button>\n</div>`,
+          html: `
+                    <div class="grid-3">
+                        <div class="card">
+                            <div style="background:#f1f5f9;height:120px;border-radius:0.375rem;margin-bottom:0.75rem;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:0.75rem">Image</div>
+                            <h3 style="font-weight:bold;margin-bottom:0.25rem">Wireless Headphones</h3>
+                            <p style="color:#64748b;font-size:0.875rem;margin-bottom:0.5rem">Noise-cancelling, 40hr battery</p>
+                            <p style="font-weight:bold;font-size:1.125rem;margin-bottom:0.75rem">$89.99</p>
+                            <button class="btn-primary">Add to Cart</button>
+                        </div>
+                        <div class="card">
+                            <div style="background:#f1f5f9;height:120px;border-radius:0.375rem;margin-bottom:0.75rem;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:0.75rem">Image</div>
+                            <h3 style="font-weight:bold;margin-bottom:0.25rem">Mechanical Keyboard</h3>
+                            <p style="color:#64748b;font-size:0.875rem;margin-bottom:0.5rem">RGB backlit, compact TKL</p>
+                            <p style="font-weight:bold;font-size:1.125rem;margin-bottom:0.75rem">$129.00</p>
+                            <button class="btn-primary">Add to Cart</button>
+                        </div>
+                        <div class="card">
+                            <div style="background:#f1f5f9;height:120px;border-radius:0.375rem;margin-bottom:0.75rem;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:0.75rem">Image</div>
+                            <h3 style="font-weight:bold;margin-bottom:0.25rem">USB-C Hub</h3>
+                            <p style="color:#64748b;font-size:0.875rem;margin-bottom:0.5rem">7-in-1, 4K HDMI support</p>
+                            <p style="font-weight:bold;font-size:1.125rem;margin-bottom:0.75rem">$45.00</p>
+                            <button class="btn-primary">Add to Cart</button>
+                        </div>
+                    </div>
+                `,
+        },
+        {
+          name: "FAQ Section",
+          template: `<h2 class="section-title">FAQ</h2>\n<div class="card">\n  <h3>Question?</h3>\n  <p>Answer here.</p>\n</div>`,
+          html: `
+                    <h2 class="section-title">Frequently Asked Questions</h2>
+                    <div class="card">
+                        <h3 style="font-weight:bold;margin-bottom:0.5rem">How do I get started?</h3>
+                        <p style="color:#475569">Simply click "New Challenge" to receive a design goal and start writing HTML & CSS to match it.</p>
+                    </div>
+                    <div class="card">
+                        <h3 style="font-weight:bold;margin-bottom:0.5rem">Can I use custom CSS?</h3>
+                        <p style="color:#475569">Yes! The CSS editor on the right lets you write any custom styles. Pre-built utility classes are also provided to get you started quickly.</p>
+                    </div>
+                    <div class="card">
+                        <h3 style="font-weight:bold;margin-bottom:0.5rem">Is my progress saved?</h3>
+                        <p style="color:#475569">Your work lives in the editor as long as the page is open. We recommend copying your code before refreshing.</p>
+                    </div>
+                    <div class="card">
+                        <h3 style="font-weight:bold;margin-bottom:0.5rem">What skill level is this for?</h3>
+                        <p style="color:#475569">Challenges range from beginner to intermediate. Great for anyone learning HTML and CSS fundamentals.</p>
+                    </div>
+                `,
+        },
+        {
+          name: "Dashboard Stats",
+          template: `<h2 class="section-title">Dashboard</h2>\n<div class="grid-3">\n  <div class="card">Stat</div>\n</div>`,
+          html: `
+                    <h2 class="section-title">Dashboard Overview</h2>
+                    <div class="grid-3" style="margin-bottom:1.5rem">
+                        <div class="card" style="text-align:center">
+                            <p style="color:#64748b;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em">Total Users</p>
+                            <p style="font-size:2rem;font-weight:bold;color:#3b82f6">12,480</p>
+                            <p style="color:#10b981;font-size:0.875rem">↑ 8.2% this month</p>
+                        </div>
+                        <div class="card" style="text-align:center">
+                            <p style="color:#64748b;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em">Revenue</p>
+                            <p style="font-size:2rem;font-weight:bold;color:#3b82f6">$54,320</p>
+                            <p style="color:#10b981;font-size:0.875rem">↑ 12.5% this month</p>
+                        </div>
+                        <div class="card" style="text-align:center">
+                            <p style="color:#64748b;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em">Open Tickets</p>
+                            <p style="font-size:2rem;font-weight:bold;color:#f59e0b">34</p>
+                            <p style="color:#ef4444;font-size:0.875rem">↑ 3 since yesterday</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 style="font-weight:bold;margin-bottom:0.75rem">Recent Activity</h3>
+                        <div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid #f1f5f9"><span>User signup: alex@example.com</span><span style="color:#64748b;font-size:0.875rem">2 min ago</span></div>
+                        <div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid #f1f5f9"><span>New order #4821 placed</span><span style="color:#64748b;font-size:0.875rem">15 min ago</span></div>
+                        <div style="display:flex;justify-content:space-between;padding:0.5rem 0"><span>Server backup completed</span><span style="color:#64748b;font-size:0.875rem">1 hr ago</span></div>
+                    </div>
+                `,
+        },
+        {
+          name: "Navigation Bar",
+          template: `<nav>\n  <a href="#" class="nav-link">Home</a>\n  <a href="#" class="nav-link">About</a>\n</nav>`,
+          html: `
+                    <nav style="display:flex;justify-content:space-between;align-items:center;background:#1e293b;padding:0.75rem 1.5rem;border-radius:0.5rem;margin-bottom:1.5rem">
+                        <span style="color:white;font-weight:bold;font-size:1.125rem">MyBrand</span>
+                        <div>
+                            <a href="#" class="nav-link" style="color:#cbd5e1">Home</a>
+                            <a href="#" class="nav-link" style="color:#cbd5e1">Features</a>
+                            <a href="#" class="nav-link" style="color:#cbd5e1">Pricing</a>
+                            <a href="#" class="nav-link" style="color:#cbd5e1">Blog</a>
+                        </div>
+                        <button class="btn-primary">Sign Up</button>
+                    </nav>
+                    <div class="hero-banner">
+                        <h1 class="section-title">Build Something Great</h1>
+                        <p style="color:#64748b">Recreate the navbar above using HTML and custom CSS classes.</p>
+                    </div>
+                `,
+        },
+        {
+          name: "Recipe Card",
+          template: `<div class="card">\n  <h2 class="section-title">Recipe Name</h2>\n  <ul><li>Ingredient</li></ul>\n</div>`,
+          html: `
+                    <div class="card" style="max-width:520px;margin:0 auto">
+                        <div style="background:#fef9c3;height:140px;border-radius:0.375rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;color:#92400e;font-size:2rem">🍝</div>
+                        <h2 class="section-title">Classic Spaghetti Carbonara</h2>
+                        <p style="color:#64748b;font-size:0.875rem;margin-bottom:1rem">⏱ 25 min &nbsp;|&nbsp; 🍽 Serves 2 &nbsp;|&nbsp; ⭐ Easy</p>
+                        <h3 style="font-weight:bold;margin-bottom:0.5rem">Ingredients</h3>
+                        <ul style="padding-left:1.25rem;margin-bottom:1rem;color:#475569">
+                            <li>200g spaghetti</li>
+                            <li>100g pancetta</li>
+                            <li>2 large eggs</li>
+                            <li>50g Parmesan, grated</li>
+                            <li>Black pepper to taste</li>
+                        </ul>
+                        <h3 style="font-weight:bold;margin-bottom:0.5rem">Instructions</h3>
+                        <ol style="padding-left:1.25rem;color:#475569">
+                            <li style="margin-bottom:0.25rem">Cook pasta until al dente and reserve pasta water.</li>
+                            <li style="margin-bottom:0.25rem">Fry pancetta until crispy.</li>
+                            <li style="margin-bottom:0.25rem">Mix eggs and Parmesan in a bowl.</li>
+                            <li>Combine everything off heat, adding pasta water to loosen.</li>
+                        </ol>
+                    </div>
+                `,
+        },
+      ];
+
+      let currentChallengeIndex = -1;
+
+      function generateChallenge() {
+        let newIndex;
+        do {
+          newIndex = Math.floor(Math.random() * challenges.length);
+        } while (newIndex === currentChallengeIndex && challenges.length > 1);
+
+        currentChallengeIndex = newIndex;
+        const challenge = challenges[currentChallengeIndex];
+
+        // Goal view is its own island, we need to inject the CSS there too
+        targetView.innerHTML = `<style>${defaultCSS}</style>${challenge.html}`;
+
+        htmlEditor.value = challenge.template;
+        cssEditor.value = defaultCSS;
+
+        updateStyles();
+        updatePreview();
+
+        document.getElementById("status-tag").innerText =
+          `Challenge: ${challenge.name}`;
+      }
+
+      window.onload = generateChallenge;
+    </script>
+  </body>
+</html>
